@@ -1,0 +1,341 @@
+<html>
+	<head>
+		<title> Práctica 1: La Fábrica de Piezas</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	</head>
+
+	<body>
+	<div id="cuadro1" style="background-color: rgb(204,255,255); width:430pt">
+	<!-- Identificación de la práctica \-->
+		<u style="font-family: sans-serif; font-size:20pt; font-style:inherit; color:rgb(255,0,0)" > Práctica 1: La Fábrica de Piezas <br/></u>
+		<p style="font-size:1pt">  <br/><p>
+		<u style="font-family: sans-serif; font-size:14pt; font-style:inherit; color:rgb(0,0,255)"> Autores de la práctica: Iván Pérez Ciruelos y David Pozo Sánchez <br/></u>
+
+	<!--Petición al usuario del número de piezas a fabricar \-->
+		<p style="font-family: times, serif; font-size:12pt; font-style:italic; color:rgb(255,128,0)">Pulse "Fabricar 100" para simular la fábrica de 100 piezas.</p>
+		<p style="font-family: times, serif; font-size:12pt; font-style:italic; color:rgb(255,128,0)">Pulse "Fabricar 1000" para simular la fábrica de 1000 piezas.</p>
+
+
+	<!-- Estilo para los botones \-->
+		<style>
+			.sbt1 {padding:6px; border-radius:10px;}
+			.sbt2 {background-color:blue; color:white; width:200px;}
+		</style>
+
+	<!-- Creación de los botones \-->
+	<input type="button" id="boton1" value="Fabricar 100"  class="sbt1 sbt2">
+	<input type="button" id="boton2" value="Fabricar 1000" class="sbt1 sbt2">
+	</div>
+	
+	<script type="text/javascript">
+	//Empleamos esta función para detectar el pulsamiento de los botones una vez se haya cargado la páginan entera
+	//También le asignamos diferentes id a cada boton para saber cuál es el pulsado
+	window.onload = function(){
+		document.getElementById("boton1").onclick = piezas100;
+		document.getElementById("boton2").onclick = piezas1000;
+	};
+	
+	//Identificar si las piezas son 100 y llamamos a la fncion TipoFabrica
+	function piezas100(){
+		var cantidad = 100;
+		TipoFabrica(cantidad);
+	}
+	//Identificar si las piezas son 1000 y llamamos a la fncion TipoFabrica
+	function piezas1000(){
+		var cantidad = 1000;
+		TipoFabrica(cantidad);
+	}
+	
+	//Constructor de la pieza generica
+	function PiezaGenerica (nombre, subtipo, codigo, fecha){
+		this.nombre = nombre;
+		this.subtipo = subtipo;
+		this.codigo = codigo;
+		this.fecha = fecha;
+	};
+
+	//Las piezas electricas y las piezas mecanicas heredan de la pieza generica
+	//Constructor de la pieza electrica
+	PiezaElectrica.prototype = new PiezaGenerica();
+	function PiezaElectrica (potencia, voltaje){
+		this.potencia = potencia;
+		this.voltaje = voltaje;
+	};
+	
+	//Constructor de la pieza mecánica
+	PiezaMecanica.prototype = new PiezaGenerica();
+	function PiezaMecanica (material){
+		this.material = material
+	};
+	
+	//Constructor de tipo de fábrica
+	function TipoFabrica (cantidad){
+	//se declaran los contadores de las piezas que se van a fabricar y se llama a la función Fabricar
+		var ContadorElectricas = 0;
+		var ContadorMecanicas = 0;
+		Fabricar(ContadorElectricas, ContadorMecanicas, cantidad);
+	};
+
+	//Constructor de tipo de factoría
+	function TipoFactoria (){
+	};
+
+	//Constructor de tipo de estación de mantenimiento
+	//Hereda de la clase PiezaGenerica
+	EstacionMantenimiento.prototype = new PiezaGenerica();
+	function EstacionMantenimiento (tipoMarca){
+		this.tipoMarca = tipoMarca;
+	};
+	
+
+
+/////////////////////////////////////////////////////////////////////////////
+	//Método fabricar para crear y devolver todas las piezas
+	function Fabricar (ContadorElectricas, ContadorMecanicas, cantidad){
+		var num;
+		for (var i=0; i<cantidad; i++){
+			num = Math.random() * (11 - 1) + 1;
+			if(num > 0 && num < 4){
+				ContadorElectricas = ContadorElectricas + 1;
+			}else if(num > 3 && num < 11){
+				ContadorMecanicas = ContadorMecanicas + 1 ;
+			}		
+		}
+	//Sacamos por pantalla los primeros resultados obtenidos
+	document.write("La factoría ha fabricado "+ cantidad + " de las cuales "+ ContadorElectricas+ " son de tipo eléctrico y "+ContadorMecanicas+" son de tipo mecánico. <br>");
+	//Llamamos a la función generarPieza para generar todas las piezas
+	generarPieza(ContadorElectricas, ContadorMecanicas);
+	};
+
+
+////////////////////////////////////////////////////////////////////////////
+	//Método para la factoría
+	function generarPieza(ContadorElectricas, ContadorMecanicas){
+	//Declaramos todos los parámetros de las piezas
+	var pieza = [];
+	var nombre;
+	var codigo;
+	var fecha;
+	var potencia;
+	var voltaje;
+	var material;
+	
+	//Declaramos los contadores para el tratamiento de las piezas
+	var BarnizNormal = 0;
+    var BarnizEspecial = 0;
+	var Pgalvanizada = 0;
+    var Ppulida = 0;
+    var Ppintada = 0;
+	
+	//Generamos las piezas eleéctricas
+	for (var k = 0; k<ContadorElectricas + 1 ; k++){
+		//Creamos el objeto pieza
+		pieza[k] = [new PiezaGenerica(), new PiezaElectrica(), new EstacionMantenimiento()];
+		
+		//Asignamos un valor a cada parámetro de las piezas
+		nombre = GenNombreE();
+		codigo = GenCodigoE();
+		fecha = GenFecha();
+		potencia = GenPotencia();
+		voltaje = GenVoltaje();
+		
+		//Llevamos la cuenta del que tratamiento van a llevar las piezas
+		if(potencia == "1" || potencia == "5"){
+			BarnizNormal = BarnizNormal + 1;
+		}else if(potencia == "10" || potencia == "20"){
+			tipoMarca = "Barniz especial";
+			BarnizEspecial = BarnizEspecial + 1;
+		}
+		
+		//Generamos las piezas eléctricas
+		pieza[k] = [nombre, "Electrica" , codigo, fecha, potencia, voltaje, procesarPieza(potencia)];
+	}
+	
+	//Generamos las piezas mecánicas
+	for (var k = ContadorElectricas+1; k<(ContadorMecanicas + ContadorElectricas + 1); k++){
+		//Creamos el objeto pieza
+		pieza[k] = [new PiezaGenerica(), new PiezaMecanica(), new EstacionMantenimiento()];
+		
+		//Asignamos un valor a cada parámetro de las piezas
+		nombre = GenNombreM();
+		codigo = GenCodigoM();
+		fecha = GenFecha();
+		material = GenMaterial();
+		
+		//Llevamos la cuenta del que tratamiento van a llevar las piezas
+		if(material == "Acero"){
+			Pgalvanizada = Pgalvanizada + 1;
+		}else if(material == "Titanio"){
+			Ppulida = Ppulida + 1;
+		}else if(material == "Carbono"){
+			Ppintada = Ppintada + 1;
+		}
+		//Generamos las piezas mecánicas
+		pieza[k] = [nombre, "Mecanica", codigo, fecha, material, procesarPieza(material)];
+	}
+	
+	//Sacamos por pantalla los resultados obtenidos
+	document.write("De las eléctricas, la estación de tratamiento ha aplicado barniz normal a " + BarnizNormal + " piezas y ha aplicado barniz especial a " + BarnizEspecial + " piezas. <br>");
+    document.write("De las mecánicas ha galvanizado " +Pgalvanizada + ", ha pintado " + Ppintada + " y ha pulido " + Ppulida + " piezas. <br>");
+	
+	//Como extra en la práctica mostramos todas las piezas generadas
+	document.write("<br>");
+	document.write("<br>");
+	document.write("-------------------------------------------------------- Mostramos todas las piezas generadas en la fábrica -------------------------------------------------------- <br>" );
+	document.write("<br>");
+	document.write("Mostramos las piezas eléctricas en formato -Nombre-Tipo-Código-Fecha-Potencia-Voltaje-Tratamiento- : <br>");
+	for (var i = 0; i<ContadorElectricas + 1 ; i++){
+		document.write("<br>");
+		document.write("Pieza " + i + ": " + pieza[i] + "<br>");
+	}
+	document.write("<br>");
+	document.write("<br>");
+	document.write("<br>");
+	document.write("Mostramos las piezas mecánicas en formato -Nombre-Tipo-Código-Fecha-Material-Tratamiento- : <br>");
+	for (var i = ContadorElectricas+1; i<(ContadorMecanicas + ContadorElectricas + 1); i++){
+		document.write("<br>");
+		document.write("Pieza " + i + ": " + pieza[i] + "<br>");
+	}
+	
+	//Funcion para generar el codigo de las piezas electricas
+	function GenNombreE(){
+		var numero1;
+		var nombre;
+		numero1 = Math.floor(Math.round(Math.random()*4));
+		if(numero1 == 0){
+			nombre = "Placa ABS";
+		}else if(numero1 == 1){
+			nombre = "Centralita encendido";
+		}else if(numero1 == 2){
+			nombre = "Bornes cableado";
+		}else if(numero1 == 3){
+			nombre = "Alternador";
+		}else if(numero1 == 4){
+			nombre = "Encendido";
+		}
+		return nombre;
+	};
+	
+	//Funcion para generar el codigo de las piezas mecanicas
+	function GenNombreM(){
+	    var nombre;
+		var numero2;
+		numero2 = Math.floor(Math.round(Math.random()*4));
+		if(numero2 == 0){
+			nombre = "Larguero inferior";
+		}else if(numero2 == 1){
+			nombre = "Guardabarros";
+		}else if(numero2 == 2){
+			nombre = "Larguero superior";
+		}else if(numero2 == 3){
+			nombre = "Subchasis";
+		}else if(numero2 == 4){
+			nombre = "Puerta";
+		}
+		return nombre;
+	};
+	
+	//Funcion para generar el codigo de las piezas electricas
+	function GenCodigoE(){
+	    var codigo
+		var numero3;
+		numero3 = Math.round(Math.random() * (10000000000 - 1000000000) );
+		codigo = numero3 + "E";
+		return codigo;
+	};
+	
+	//Funcion para generar el codigo de las piezas mecanicas
+	function GenCodigoM(){
+		var numero4;
+		var codigo;
+		numero4 = Math.round(Math.random() * (10000000000 - 1000000000) );
+		codigo = numero4 + "M";
+		return codigo;
+	};
+	
+	//Funcion para generar la fecha de fabricación
+	function GenFecha(){
+		var fecha = new Date();
+		this.fecha = (fecha.getDate()) + "/" +(fecha.getMonth()+1) + "/" + (fecha.getFullYear());
+		return fecha;
+	};
+	
+	//Funcion para generar la potencia de las piezas electricas
+	function GenPotencia(){
+		var numero5;
+		var potencia;
+		numero5 = Math.floor(Math.round(Math.random()*3));
+		if(numero5 == 0){
+			potencia = "1";
+		}else if(numero5 == 1){
+			potencia = "5";
+		}else if(numero5 == 2){
+			potencia = "10";
+		}else if(numero5 == 3){
+			potencia = "20";
+		}
+		return potencia;
+	};
+	
+	//Funcion para generar el voltaje de las piezas electricas
+	function GenVoltaje(){
+		var numero6;
+		var voltaje;
+		numero6 = Math.floor(Math.round(Math.random()*3));
+		if(numero6 == 0){
+			voltaje = "3.3";
+		}else if(numero6 == 1){
+			voltaje = "5";
+		}else if(numero6 == 2){
+			voltaje = "12";
+		}else if(numero6 == 3){
+			voltaje = "240";
+		}
+		return voltaje;
+	};
+	
+	//Funcion para generar el material de las piezas mecanicas
+	function GenMaterial(){
+		var numero7;
+		var material;
+		numero7 = Math.floor(Math.round(Math.random()*2));
+		if(numero7 == 0){
+			material = "Acero";
+		}else if(numero7 == 1){
+			material = "Titanio";
+		}else if(numero7 == 2){
+			material = "Carbono";
+		}
+		return material;
+	};
+	return pieza;
+	};
+
+/////////////////////////////////////////////////////////////////////////////
+	//Método para la estación de procesamiento
+    function procesarPieza (auxiliar) {
+    var tipoMarca;
+    if(auxiliar == "1" || auxiliar == "5"){
+        tipoMarca = "Barniz normal";
+    }else if(auxiliar == "10" || auxiliar == "20"){
+        tipoMarca = "Barniz especial";
+    }else if(auxiliar == "Acero"){
+        tipoMarca = "Galvanizada";
+    }else if(auxiliar == "Titanio"){
+        tipoMarca = "Pulida";
+    }else if(auxiliar == "Carbono"){
+        tipoMarca = "Pintada";
+    }
+        return tipoMarca;
+    };
+	
+		</script>
+	</body>
+</html>
+
+
+
+
+
+
+
